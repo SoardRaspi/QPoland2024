@@ -1,0 +1,52 @@
+// Define the ansatz as a qfunc without using for loops
+qfunc ansatz(parameters: list[float], n_qubits: int, n_layers: int, system_qubits: qbit[]) {
+    // Apply initial rotation layer
+    repeat (i: n_qubits) {
+        RY(parameters[i], system_qubits[i]);
+    }
+
+    repeat (layer: n_layers) {
+        // CX layer on alternating pairs
+        repeat (i: n_qubits / 2) {
+            CX(system_qubits[i],system_qubits[i+1]); // Even indices CX gates
+        }
+        repeat (i: n_qubits / 2 - 1) {
+            CX(system_qubits[i],system_qubits[i+1]); // Odd indices CX gates
+        }
+
+        // Apply rotation layer
+        repeat (i: n_qubits) {
+            RY(parameters[n_qubits + layer * n_qubits + i], system_qubits[i]);
+        }
+    }
+}
+
+// Define the operator A using the interaction terms without for loops
+qfunc apply_operator_a(system_qubits: qbit[]) {
+    // Apply the sum of Pauli-X gates
+    repeat (j: system_qubits.len) {
+        X(system_qubits[j]); // Applying Pauli-X
+    }
+
+    // Apply the sum of ZZ interaction terms
+    repeat (j: system_qubits.len - 1) {
+        Z(system_qubits[j]);
+        Z(system_qubits[j + 1]); // Applying ZZ interaction terms
+    }
+}
+
+// Combine in the block encoding for VQLS
+qfunc block_encoding_vqls(system_qubits: qbit[]) {
+    ansatz([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],10,4,system_qubits);  // Prepare the ansatz
+    apply_operator_a(system_qubits);  // Apply the operator A
+    invert{ansatz([0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],10,4,system_qubits);}  // Unprepare the ansatz
+}
+
+// Main quantum function
+qfunc main(output system_qubits: qbit[], output ancillary_qubits: qbit[]) {
+    allocate(10, system_qubits);
+    allocate(5, ancillary_qubits);
+      
+    block_encoding_vqls(system_qubits);
+
+}
