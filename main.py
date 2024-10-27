@@ -153,7 +153,7 @@ def run_vqls(ans_type):
     # Draw the final ansatz circuit
     final_circuit = solver.create_ansatz(result.x, ans_type)
     print("Final Ansatz Circuit:")
-    display(circuit_drawer(final_circuit, output='mpl', scale=0.8))
+    circuit_drawer(final_circuit, output='mpl', scale=0.8, filename='final_circuit.png')
 
     # Plot the cost function over epochs
     plt.figure(figsize=(10, 6))
