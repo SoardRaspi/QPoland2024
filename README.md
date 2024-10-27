@@ -9,7 +9,7 @@ After this the code can be run, after which the image of the final circuit is sa
 
 Comparison graphs:
 The following graph is for the "standard" ansatz (the first one described above)
-!["standard graph"](images/standard.png)
+!["standard ansatz graph"](images/standard.png)
 
 The following graph is for the "proposed_first" ansatz (the second one described above)
-!["standard graph"](images/proposed_first.png)
+!["proposed_first ansatz graph"](images/proposed_first.png)
